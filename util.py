@@ -27,8 +27,10 @@ values = {
     'y': 4,
     'z': 10,
     ' ': 0,
-    '\n': 0
+    '?': 0,
+    '' : 0
 }
+alfabet = "abcdefghijklmnopqrstuvwxyz"
 def process(path: str):
     with open(f'{path}.txt','r') as s:
         wordlist = s.readlines()
@@ -44,6 +46,14 @@ def process(path: str):
     with open(f'{path}res.txt','w') as f:
         f.writelines(res)
 
+def getValue(s: str, wildcard: str):
+    res = 0
+    for letter in s:
+        res += values.get(letter)
+    for letter in wildcard:
+        res -= values.get(letter)
+    return res
+
 def parse(path: str):
     with open(f'{path}.txt','r') as r:
         temp = r.readlines()
@@ -51,22 +61,35 @@ def parse(path: str):
     with open(f'{path}Parsed.txt','w') as w:
         w.writelines(wr)
 
-def getList(path: str):
+def getList(path: str) -> list[str]:
     with open(f'{path}.txt','r') as f:
         wordlist = f.readlines()
-    test = dict()
-    for word in wordlist:
-        worde, val = word.split(' ')
-        test[worde.lower()] = int(val)
-    return test
+    return [word.strip('\n').lower() for word in wordlist]
 
-def permutations(s: str):
+def getWildcard(s: str) -> set[tuple[str,str]]:
+    res = set()
+    count = s.count('?')
+    temp = s.strip('?')
+    test = [''.join(p) for p in itertools.product(alfabet,repeat = count)]
+    a = set(tuple(sorted(x)) for x in test)
+    for elem in a:
+        b = temp + ''.join(elem) 
+        res.add(b)
+    return res
+
+def permutations(s: str, wordlist:set[str]) -> set:
     a = set()
     for i in range(1,len(s)+1):
         b = [''.join(p) for p in itertools.permutations(s,i)]
         a = a.union(set(b))
-    return a
+    return wordlist.intersection(a)
+
+def disjoin(full: str, part: str):
+    for letter in part:
+        full = full.replace(letter,'',1)
+    return full
 
 if __name__ == '__main__':
-    process('NWL2020Parsed')
+    # print(getList('TWL06'))
+    print(getValue('aaazzz'))
     pass

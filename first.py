@@ -17,13 +17,22 @@ class Scrabble:
     
     def checkBest(self, available: str):
         temp = dict()
-        wordlist = util.getList('NWL2020Parsedres')
-        variantions = util.permutations(available)
+        wilds = dict()
+        wordlist = util.getList('NWL2020Parsed')
+        if '?' in available:
+            avalist = util.getWildcard(available)
+            variantions = set()
+            for elem in avalist:
+                x = util.permutations(elem, set(wordlist))
+                variantions = variantions.union(x)
+        else:
+            variantions = util.permutations(available, set(wordlist))
         for var in variantions:
             if var in wordlist:
-                temp[var] = wordlist.get(var)
-        # print(temp)
-        print(sorted(temp.items(), key=lambda item: item[1], reverse=True))
+                # print(var)
+                wildcard = util.disjoin(var,available)
+                temp[var] = util.getValue(var, wildcard)
+        print(sorted(temp.items(), key=lambda item: item[1], reverse=True)[:20])
         return sorted(temp.items(), key=lambda item: item[1], reverse=True)
         
         
