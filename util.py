@@ -89,7 +89,27 @@ def disjoin(full: str, part: str):
         full = full.replace(letter,'',1)
     return full
 
+def parsePos(s: str, dir: str, length: int) -> list[tuple[int,int]]:
+    res: list[tuple[int,int]] = []
+    posx, posy = s.split()
+    first = (int(posx),int(posy))
+    # second = (int(pos2[0]), int(pos2[1]))
+    # diff = (abs(second[0]-first[0]),abs(second[1]-first[1]))
+    if dir == 'r':
+        for i in range(first[1], first[1] + length):
+            res.append((first[0],i))
+    else:
+        for i in range(first[0], first[0] + length):
+            res.append((i,first[1]))
+    return res
+
+def sortDict(dic: dict) -> dict:
+    return sorted(dic.items(), key=lambda item: item[1], reverse=True)[:20]
+
+def sortList(lis: list[tuple[str,int]]) -> list[tuple[str,int]]:
+    return sorted(lis ,key=lambda tup: tup[1],reverse=True)
+
 if __name__ == '__main__':
     # print(getList('TWL06'))
-    print(getValue('aaazzz'))
+    # print(sortList([('fest', 7), ('fets', 7), ('fes', 6), ('eft', 6), ('fet', 6), ('efs', 6), ('fe', 5), ('ef', 5), ('est', 3),('efts', 7)]))
     pass
