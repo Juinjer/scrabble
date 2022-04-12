@@ -27,7 +27,7 @@ values = {
     'x': 8,
     'y': 4,
     'z': 10,
-    ' ': 0,
+    '  ': 0,
     '?': 0,
     '' : 0
 }
@@ -80,12 +80,12 @@ def getWildcard(s: str) -> set[tuple[str,str]]:
 
 def permutations(s: str, wordlist:set[str]) -> set:
     a = set()
-    first = time.time()
+    # first = time.time()
     for word in wordlist:
         if checkWord(word,s):
             a.add(word)
-    second = time.time()
-    print("2 " + str(second-first))
+    # second = time.time()
+    # print("2 " + str(second-first))
     return a
 
 def checkWord(word: str, available: str)-> bool:
