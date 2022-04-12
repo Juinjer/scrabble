@@ -1,4 +1,5 @@
 import itertools
+import time
 values = {
     'a': 1,
     'b': 3,
@@ -61,10 +62,10 @@ def parse(path: str):
     with open(f'{path}Parsed.txt','w') as w:
         w.writelines(wr)
 
-def getList(path: str) -> list[str]:
+def getWordList(path: str) -> set[str]:
     with open(f'{path}.txt','r') as f:
         wordlist = f.readlines()
-    return [word.strip('\n').lower() for word in wordlist]
+    return set([word.strip('\n').lower() for word in wordlist])
 
 def getWildcard(s: str) -> set[tuple[str,str]]:
     res = set()
@@ -79,10 +80,34 @@ def getWildcard(s: str) -> set[tuple[str,str]]:
 
 def permutations(s: str, wordlist:set[str]) -> set:
     a = set()
-    for i in range(1,len(s)+1):
-        b = [''.join(p) for p in itertools.permutations(s,i)]
-        a = a.union(set(b))
-    return wordlist.intersection(a)
+    first = time.time()
+    for word in wordlist:
+        if checkWord(word,s):
+            a.add(word)
+    second = time.time()
+    print("2 " + str(second-first))
+    return a
+
+def checkWord(word: str, available: str)-> bool:
+    # if word == 'bechalking':
+    #     print(word)
+    for x in word:
+        if x not in available:
+            return False
+        available = available.replace(x,'',1)
+    return True
+
+# def permutations(s: str, wordlist:set[str]) -> set:
+#     first = time.time()
+#     a = set()
+#     for i in range(1,len(s)+1):
+#         b = [''.join(p) for p in itertools.permutations(s,i)]
+#         a = a.union(set(b))
+#         a = a.intersection(wordlist)
+#         # print(len(a))
+#     second = time.time()
+#     print("1 " + str(second-first))
+#     return wordlist.intersection(a)
 
 def disjoin(full: str, part: str):
     for letter in part:
@@ -104,12 +129,12 @@ def parsePos(s: str, dir: str, length: int) -> list[tuple[int,int]]:
     return res
 
 def sortDict(dic: dict) -> dict:
-    return sorted(dic.items(), key=lambda item: item[1], reverse=True)[:20]
+    return dict(sorted(dic.items(), key=lambda item: item[1], reverse=True)[:20])
 
 def sortList(lis: list[tuple[str,int]]) -> list[tuple[str,int]]:
     return sorted(lis ,key=lambda tup: tup[1],reverse=True)
 
 if __name__ == '__main__':
-    # print(getList('TWL06'))
-    # print(sortList([('fest', 7), ('fets', 7), ('fes', 6), ('eft', 6), ('fet', 6), ('efs', 6), ('fe', 5), ('ef', 5), ('est', 3),('efts', 7)]))
+    print(permutations("abcdefghi",getWordList('NWL2020Parsed')))
+    # print(permutations2("abcdefghi",getWordList('NWL2020Parsed')))
     pass
