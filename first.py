@@ -5,13 +5,14 @@ from copy import deepcopy
 class Scrabble:
     def __init__(self, field: int, list: str = 'TWL06') -> None:
         self.wordlist = util.getWordList(list)
-        self.field = self.initfield(field)
+        self.field = self.initfield(field, '  ')
+        self.valuemap = self.initfield(field, 0)
         self.reprField(self.field)
         self.play()
         self.playplaces = set((field//2+1,field//2+1))
 
-    def initfield(self, dim: int):
-        arr = [['  ' for i in range(dim)] for j in range(dim)]
+    def initfield(self, dim: int, fill: str|int) -> list[list[str | int]]:
+        arr = [[fill for i in range(dim)] for j in range(dim)]
         return arr
     
     def reprField(self, field: list[list[str]]):
@@ -103,10 +104,12 @@ class Scrabble:
     
     def fillWord(self, positions: list[tuple[int, int]], word: str) -> None:
         tempboard = deepcopy(self.field)
+        tempvalues = deepcopy(self.valuemap)
         i = 0
         for elem in positions:
             if tempboard[elem[0]][elem[1]] == '  ':
                 tempboard[elem[0]][elem[1]] = word[i]
+                tempvalues[elem[0]][elem[1]] = util.values.get(word[i])
             i+=1
         if self.checkValidBoard(tempboard):
             self.field = tempboard
@@ -114,39 +117,52 @@ class Scrabble:
             print("not a valid word/position")
 
     def displayOptions(self, wordoptions: dict[str, int], available: str):
+        i = 0
         for w in wordoptions:
             boardletter = util.disjoin(w, available)
             if available:
                 print(f'Play {w}, value: {wordoptions[w]} through letter {boardletter}')
             else:
                 print(f'Play {w}, value: {wordoptions[w]}')
+            if i == 19:
+                break
+            i += 1
     
-    def tempFill(self, wordoptions: dict[str, int], available: str):
+    def tempFill(self, wordoptions: dict[str, int], available: str) -> list[list[dict[str, int]]]:
         for w in wordoptions:
             boardletter = util.disjoin(w, available)
             index = w.find(boardletter)
             if boardletter:
                 for (posy,posx) in self.getPositions(boardletter):
                     tempboard = deepcopy(self.field)
+                    tempvalues = deepcopy(self.valuemap)
                     beginh = posx - index
                     endh = posx - index + len(w)
                     j = 0
+                    valid = True
                     for i in range(beginh,endh):
                         if tempboard[posy][i] == '  ' or tempboard[posy][i] == boardletter:
                             tempboard[posy][i] = w[j]
+                            tempvalues[posy][i] = util.values.get(w[j])
+                        else:
+                            valid = False
                         j +=1
-                    if self.checkValidBoard(tempboard):
+                    if self.checkValidBoard(tempboard) and valid:
                         self.reprField(tempboard)
                         return tempboard
                     tempboard = deepcopy(self.field)
                     beginv = posy - index
                     endv = posy - index + len(w)
                     j = 0
+                    valid = True
                     for i in range(beginv,endv):
                         if tempboard[i][posx] == '  ' or tempboard[i][posx] == boardletter:
                             tempboard[i][posx] = w[j]
+                            tempvalues[i][posx] = util.values.get(w[j])
+                        else:
+                            valid = False
                         j +=1
-                    if self.checkValidBoard(tempboard):
+                    if self.checkValidBoard(tempboard) and valid:
                         self.reprField(tempboard)
                         return tempboard
     
@@ -160,4 +176,4 @@ class Scrabble:
         
         
 if __name__ == "__main__":
-    Scrabble(25)
+    Scrabble(30)

@@ -129,7 +129,7 @@ def parsePos(s: str, dir: str, length: int) -> list[tuple[int,int]]:
     return res
 
 def sortDict(dic: dict) -> dict:
-    return dict(sorted(dic.items(), key=lambda item: item[1], reverse=True)[:20])
+    return dict(sorted(dic.items(), key=lambda item: item[1], reverse=True))
 
 def sortList(lis: list[tuple[str,int]]) -> list[tuple[str,int]]:
     return sorted(lis ,key=lambda tup: tup[1],reverse=True)
