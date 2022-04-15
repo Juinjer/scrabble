@@ -1,2 +1,4 @@
 __pycache__/
 *.txt
+venv/
+.flake8
